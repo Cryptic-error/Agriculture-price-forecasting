@@ -9,11 +9,13 @@ start_date = datetime(2014, 1, 1)
 end_date = datetime(2024, 2, 13)
 
 current_date = start_date
-
-while (current_date <= end_date):
-    # print(current_date.strftime('%Y-%m-%d'))
-    current_date += timedelta(days=1)
-    date =current_date.strftime('%Y-%m-%d')
+count=0
+# =============================================================================
+# while (current_date <= end_date):
+#     # print(current_date.strftime('%Y-%m-%d'))
+#     current_date += timedelta(days=1)
+#     date =current_date.strftime('%Y-%m-%d')
+# =============================================================================
 
 csv_file = "outputdataset.csv"
 
@@ -38,31 +40,37 @@ headers = {
     'Te': 'trailers',
 }
 
-data = {
-    '_token': 'B4rIpGPLHWWwhA5YlEctHlmyC84HYJZoAkNy7Hsf',
-    'datePricing': 'date',
-}
-for date in date:
-    def response():
-        response = requests.post(url, headers=headers, data=data)
-        soup=BeautifulSoup(response.text, 'html.parser')
-        table = []
-        for row in soup.select("tr")[1:2]:
-            table.append([td.get_text() for td in row.select("td")])
-            column_names = [
-                td.get_text(strip=True) for td in soup.select_one("tr").select("th")
-                ]
-        print(date)
-        df = pd.DataFrame(table, columns=['Name', 'Category', 'Price 1', 'Price 2', 'Price 3'])
-        csv_file = "output_pandas.csv"
-        df.to_csv(csv_file, mode='a', header=False, index=False, encoding='utf-8')
-# =============================================================================
-#         with open(csv_file, mode='w', newline='' ,encoding='utf-8') as file:
-#             writer = csv.writer(file)
-#             writer.writerows(table)        
-# =============================================================================
+while (current_date <= end_date):
+    # print(current_date.strftime('%Y-%m-%d'))
+    current_date += timedelta(days=1)
+    date =current_date.strftime('%Y-%m-%d')
+    count+=1
+
+    data = {
+        '_token': 'B4rIpGPLHWWwhA5YlEctHlmyC84HYJZoAkNy7Hsf',
+        'datePricing': date,
+    }
+    for date in date:
+        def response():
+            response = requests.post(url, headers=headers, data=data)
+            soup=BeautifulSoup(response.text, 'html.parser')
+            table = []
+            for row in soup.select("tr")[1:2]:
+                table.append([td.get_text() for td in row.select("td")])
+                column_names = [
+                    td.get_text(strip=True) for td in soup.select_one("tr").select("th")
+                    ]
+            print(table)
+            df = pd.DataFrame(table, columns=['Name', 'Category', 'Price 1', 'Price 2', 'Price 3'])
+            csv_file = "output_pandas.csv"
+            df.to_csv(csv_file, mode='a', header=False, index=False, encoding='utf-8')
+    # =============================================================================
+    #         with open(csv_file, mode='w', newline='' ,encoding='utf-8') as file:
+    #             writer = csv.writer(file)
+    #             writer.writerows(table)        
+    # =============================================================================
     response()
+        
     
-
-
-
+print("done")
+    
